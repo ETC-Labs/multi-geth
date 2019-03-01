@@ -2,18 +2,6 @@
 
 A distribution of the go-ethereum client and codebase with support for many species of Ethereum networks.
 
-|                            | `geth`             | `bootnode`         | `evm`              | `clef`             | `ethkey`           | `p2psim`           | `rlpdump`          |
-| ---                        | ---                | ---                | ---                | ---                | ---                | ---                | ---                |
-| Ethereum (__ETH__)         | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Ethereum Classic (__ETC__) | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Social                     | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| EtherSocial                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Mix                        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Ropsten (ETH PoW Testnet)  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Rinkeby (ETH PoA Testnet)  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Kotti (ETH PoA Testnet)    | :white_check_mark: | n/a                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| Goerli (ETC PoA Testnet)   | :white_check_mark: | n/a                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-
 The multi-geth client binary `geth` provides support for the following networks.
 
 | Ticker | Network                   | How to run a `geth` client on this network | Default data dir           |

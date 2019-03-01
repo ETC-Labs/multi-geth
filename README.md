@@ -2,19 +2,28 @@
 
 A distribution of the go-ethereum client and codebase with support for many species of Ethereum networks.
 
-The multi-geth client binary `geth` provides support for the following networks.
+The included client binary `geth` provides support for the following networks.
 
-| Ticker | Network                   | How to run a `geth` client on this network | Default data dir           |
-| ---    | ---                       | ---                                        | ---                        |
-| ETH    | Ethereum                  | `geth`                                     | `~/.ethereum/`             |
-| ETC    | Ethereum Classic          | `geth --classic`                           | `~/.ethereum/classic/`     |
-| ETSC   | Ethereum Social           | `geth --social`                            | `~/.ethereum/social/`      |
-| ESN    | EtherSocial               | `geth --ethersocial`                       | `~/.ethereum/ethersocial/` |
-| MIX    | Mix                       | `geth --mix`                               | `~/.ethereum/mix/`         |
-| -      | Ropsten (ETH POW Testnet) | `geth --testnet`                           | `~/.ethereum/ropsten/`     |
-| -      | Rinkeby (ETH POA Testnet) | `geth --rinkeby`                           | `~/.ethereum/rinkeby/`     |
-| -      | Kotti                     | `geth --kotti`                             | `~/.ethereum/kotti/`       |
-| -      | Goerli                    | `geth --goerli`                            | `~/.ethereum/goerli/`      |
+| Ticker   | Network                               | Usage | Default data dir           |
+| ---      | ---                                   | ---                                        | ---                        |
+| ETH      | Ethereum                              | `geth`                                     | `~/.ethereum/`             |
+| ETC      | Ethereum Classic                      | `geth --classic`                           | `~/.ethereum/classic/`     |
+| ETSC     | Ethereum Social                       | `geth --social`                            | `~/.ethereum/social/`      |
+| ESN      | EtherSocial                           | `geth --ethersocial`                       | `~/.ethereum/ethersocial/` |
+| MIX      | Mix                                   | `geth --mix`                               | `~/.ethereum/mix/`         |
+| ~~ELLA~~ | ~~Ellaism~~                           | ~~`geth --ellaism`~~                       | ~~`~/.ethereum/ellaism/`~~ |
+| -        | Ropsten (Geth+Parity ETH PoW Testnet) | `geth --testnet`                           | `~/.ethereum/ropsten/`     |
+| -        | Rinkeby (Geth-only ETH PoA Testnet)   | `geth --rinkeby`                           | `~/.ethereum/rinkeby/`     |
+| -        | Goerli (Geth+Parity ETH PoA Testnet)  | `geth --goerli`                            | `~/.ethereum/goerli/`      |
+| -        | Kotti (Geth+Parity ETC PoA Testnet)   | `geth --kotti`                             | `~/.ethereum/kotti/`       |
+| -        | _dev_                                 | `geth --dev`                               | in-memory (ephemeral)      |
+
+:information: This is originally an [Ellaism
+Project](https://github.com/ellaism). However, A [recent hard
+fork](https://github.com/ellaism/specs/blob/master/specs/2018-0003-wasm-hardfork.md)
+makes Ellaism not feasible to support with go-ethereum any more. Existing
+Ellaism users are asked to switch to
+[Parity](https://github.com/paritytech/parity).
 
 [![API Reference](
 https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
@@ -23,15 +32,9 @@ https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/6874
 [![Travis](https://travis-ci.org/ethoxy/multi-geth.svg?branch=master)](https://travis-ci.org/ethoxy/multi-geth)
 [![Join the chat at https://gitter.im/ethoxy/multi-geth](https://badges.gitter.im/ethoxy/multi-geth.svg)](https://gitter.im/ethoxy/multi-geth)
 
-
-
 Binary archives are published at https://github.com/ethoxy/multi-geth/releases.
 
-## Building the source
-
-For prerequisites and detailed build instructions please read the
-[Installation Instructions](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum)
-on the wiki.
+## Managing versions
 
 Since this is a downstream fork of [ethereum/go-ethereum](https://github.com/ethereum/go-ethereum), you'll want to maintain the go import path and git remotes accordingly.
 This repository should occupy `$GOPATH/src/github.com/ethereum/go-ethereum`, and you can optionally use `git` to use this fork as a default upstream remote.
@@ -54,6 +57,12 @@ $ git fetch ethoxy
 $ git checkout -B master -t ethoxy/master
 ```
 
+## Building the source
+
+For prerequisites and detailed build instructions please read the
+[Installation Instructions](https://github.com/ethereum/go-ethereum/wiki/Building-Ethereum)
+on the wiki.
+
 Building geth requires both a Go (version 1.10 or later) and a C compiler.
 You can install them using your favourite package manager.
 Once the dependencies are installed, run
@@ -64,14 +73,6 @@ or, to build the full suite of utilities:
 
     make all
 
-## Ellaism network
-
-This is originally an [Ellaism
-Project](https://github.com/ellaism). However, A [recent hard
-fork](https://github.com/ellaism/specs/blob/master/specs/2018-0003-wasm-hardfork.md)
-makes Ellaism not feasible to support go-ethereum any more. Existing
-Ellaism users are asked to switch to
-[Parity](https://github.com/paritytech/parity).
 
 ## Executables
 
@@ -95,15 +96,15 @@ Going through all the possible command line flags is out of scope here (please c
 enumerated a few common parameter combos to get you up to speed quickly on how you can run your
 own Geth instance.
 
-### Full node on the main Ethereum network
+### Fast node on an Ethereum network
 
-By far the most common scenario is people wanting to simply interact with the Ethereum network:
+By far the most common scenario is people wanting to simply interact with an Ethereum network:
 create accounts; transfer funds; deploy and interact with contracts. For this particular use-case
 the user doesn't care about years-old historical data, so we can fast-sync quickly to the current
 state of the network. To do so:
 
 ```
-$ geth console
+$ geth [|--classic|--social|--ethersocial|--testnet|--rinkeby|--kotti|--goerli] console
 ```
 
 This command will:
@@ -115,50 +116,18 @@ This command will:
    (via the trailing `console` subcommand) through which you can invoke all official [`web3` methods](https://github.com/ethereum/wiki/wiki/JavaScript-API)
    as well as Geth's own [management APIs](https://github.com/ethereum/go-ethereum/wiki/Management-APIs).
    This tool is optional and if you leave it out you can always attach to an already running Geth instance
-   with `geth attach`.
-
-### Full node on the main Ellaism network
-
-To get on Ellaism network and take advantage of fast-sync:
-
-```
-$ geth --ellaism console
-```
-
-This command will:
-
- * Start geth in fast sync mode and start up geth's built-in interactive JavaScript console,
-   connecting to Ellaism network.
- * Default data directory will be `~/.ethereum/ellaism`.
-
-### Full node on the main Ethereum Classic network
-
-To get on Ethereum Classic network and take advantage of fast-sync:
+   with `geth attach`. To keep the console clear of event logs while interacting with the console, you
+   can append `2> stderr.log`, which will redirect the normal stderr messages to a file for later reference, while
+   keeping the console and it's output (on stdout) visible in the console.
+   
+### Full archive node on an Ethereum network
 
 ```
-$ geth --classic console
+$ geth [|--<chain>] --syncmode=full --gcmode=archive
 ```
 
-This command will:
-
- * Start geth in fast sync mode and start up geth's built-in interactive JavaScript console,
-   connecting to Ethereum Classic network.
- * Default data directory will be `~/.ethereum/classic`.
-
-### All networks
-
-For a full list of networks supported by multi-geth, take a look at the command-line help messages:
-
-```
---testnet                            Ropsten network: pre-configured proof-of-work test network
---ellaism                            Ellaism network: pre-configured Ellaism mainnet
---classic                            Ethereum Classic network: pre-configured Ethereum Classic mainnet
---social                             Ethereum Social network: pre-configured Ethereum Social mainnet
---mix                                MIX network: pre-configured MIX mainnet
---ethersocial                        Ethersocial network: pre-configured Ethersocial mainnet
---rinkeby                            Rinkeby network: pre-configured proof-of-authority test network
---kotti                              Kotti network: cross-client proof-of-authority test network
-```
+This command will start geth in a full archive mode, causing it to download, process, and store the entirety
+of available chain data.
 
 ### Configuration
 
@@ -181,7 +150,7 @@ $ geth --your-favourite-flags dumpconfig
 One of the quickest ways to get Ethereum up and running on your machine is by using Docker:
 
 ```
-docker run -d --name ethereum-node -v /Users/alice/ethereum:/root \
+docker run -d --name ethereum-node -v /Users/alice/.ethereum:/root \
            -p 8545:8545 -p 30303:30303 \
            ethereum/client-go
 ```

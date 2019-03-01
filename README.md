@@ -31,6 +31,7 @@ fork](https://github.com/ellaism/specs/blob/master/specs/2018-0003-wasm-hardfork
 makes Ellaism not feasible to support with go-ethereum any more. Existing
 Ellaism users are asked to switch to
 [Parity](https://github.com/paritytech/parity).
+
 Binary archives are published at https://github.com/ethoxy/multi-geth/releases.
 
 ## Managing versions

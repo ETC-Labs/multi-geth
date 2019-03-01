@@ -117,6 +117,24 @@ var (
 		Ethash:              new(EthashConfig),
 	}
 
+	// EthersocialChainConfig is the chain parameters to run a node on the Ethersocial main network.
+	EthersocialChainConfig = &ChainConfig{
+		ChainID:             big.NewInt(31102),
+		HomesteadBlock:      big.NewInt(0),
+		DAOForkBlock:        big.NewInt(0),
+		DAOForkSupport:      false,
+		EIP150Block:         big.NewInt(0),
+		EIP150Hash:          common.HexToHash("0x310dd3c4ae84dd89f1b46cfdd5e26c8f904dfddddc73f323b468127272e20e9f"),
+		EIP155Block:         big.NewInt(845000),
+		EIP158Block:         big.NewInt(845000),
+		ByzantiumBlock:      big.NewInt(600000),
+		DisposalBlock:       nil,
+		SocialBlock:         nil,
+		EthersocialBlock:    big.NewInt(0),
+		ConstantinopleBlock: nil,
+		Ethash:              new(EthashConfig),
+	}
+
 	// MainnetTrustedCheckpoint contains the light client trusted checkpoint for the main network.
 	MainnetTrustedCheckpoint = &TrustedCheckpoint{
 		Name:         "mainnet",
@@ -142,24 +160,6 @@ var (
 		EthersocialBlock:    nil,
 		ConstantinopleBlock: nil,
 		EIP160FBlock:        big.NewInt(0),
-	}
-
-	// EthersocialChainConfig is the chain parameters to run a node on the Ethersocial main network.
-	EthersocialChainConfig = &ChainConfig{
-		ChainID:             big.NewInt(31102),
-		HomesteadBlock:      big.NewInt(0),
-		DAOForkBlock:        big.NewInt(0),
-		DAOForkSupport:      false,
-		EIP150Block:         big.NewInt(0),
-		EIP150Hash:          common.HexToHash("0x310dd3c4ae84dd89f1b46cfdd5e26c8f904dfddddc73f323b468127272e20e9f"),
-		EIP155Block:         big.NewInt(845000),
-		EIP158Block:         big.NewInt(845000),
-		ByzantiumBlock:      big.NewInt(600000),
-		DisposalBlock:       nil,
-		SocialBlock:         nil,
-		EthersocialBlock:    big.NewInt(0),
-		ConstantinopleBlock: nil,
-		Ethash:              new(EthashConfig),
 	}
 
 	// TestnetChainConfig contains the chain parameters to run a node on the Ropsten test network.

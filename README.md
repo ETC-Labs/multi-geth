@@ -9,9 +9,9 @@ https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/6874
 [![Travis](https://travis-ci.org/ethoxy/multi-geth.svg?branch=master)](https://travis-ci.org/ethoxy/multi-geth)
 [![Join the chat at https://gitter.im/ethoxy/multi-geth](https://badges.gitter.im/ethoxy/multi-geth.svg)](https://gitter.im/ethoxy/multi-geth)
 
-The included client binary `geth` provides support for the following networks.
+The included client binary `geth` provides preconfigured support for the following networks.
 
-| Ticker   | Network                               | Usage                | Default data dir           |
+| Ticker   | Network                               | Usage                | Default data dir (unix)    |
 | ---      | ---                                   | ---                  | ---                        |
 | ETH      | Ethereum                              | `geth`               | `~/.ethereum/`             |
 | ETC      | Ethereum Classic                      | `geth --classic`     | `~/.ethereum/classic/`     |

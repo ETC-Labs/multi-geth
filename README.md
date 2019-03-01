@@ -2,6 +2,13 @@
 
 A distribution of the go-ethereum client and codebase with support for many species of Ethereum networks.
 
+[![API Reference](
+https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
+)](https://godoc.org/github.com/ethereum/go-ethereum)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ethoxy/multi-geth)](https://goreportcard.com/report/github.com/ethoxy/multi-geth)
+[![Travis](https://travis-ci.org/ethoxy/multi-geth.svg?branch=master)](https://travis-ci.org/ethoxy/multi-geth)
+[![Join the chat at https://gitter.im/ethoxy/multi-geth](https://badges.gitter.im/ethoxy/multi-geth.svg)](https://gitter.im/ethoxy/multi-geth)
+
 The included client binary `geth` provides support for the following networks.
 
 | Ticker   | Network                               | Usage | Default data dir           |
@@ -24,14 +31,6 @@ fork](https://github.com/ellaism/specs/blob/master/specs/2018-0003-wasm-hardfork
 makes Ellaism not feasible to support with go-ethereum any more. Existing
 Ellaism users are asked to switch to
 [Parity](https://github.com/paritytech/parity).
-
-[![API Reference](
-https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
-)](https://godoc.org/github.com/ethereum/go-ethereum)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ethoxy/multi-geth)](https://goreportcard.com/report/github.com/ethoxy/multi-geth)
-[![Travis](https://travis-ci.org/ethoxy/multi-geth.svg?branch=master)](https://travis-ci.org/ethoxy/multi-geth)
-[![Join the chat at https://gitter.im/ethoxy/multi-geth](https://badges.gitter.im/ethoxy/multi-geth.svg)](https://gitter.im/ethoxy/multi-geth)
-
 Binary archives are published at https://github.com/ethoxy/multi-geth/releases.
 
 ## Managing versions

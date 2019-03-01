@@ -121,9 +121,9 @@ This command will:
    (via the trailing `console` subcommand) through which you can invoke all official [`web3` methods](https://github.com/ethereum/wiki/wiki/JavaScript-API)
    as well as Geth's own [management APIs](https://github.com/ethereum/go-ethereum/wiki/Management-APIs).
    This tool is optional and if you leave it out you can always attach to an already running Geth instance
-   with `geth attach`. To keep the console clear of event logs while interacting with the console, you
-   can append `2> stderr.log`, which will redirect the normal stderr messages to a file for later reference, while
-   keeping the console and it's output (on stdout) visible in the console.
+   with `geth attach`. To keep the shell clear of event logs while interacting with the JS console, you
+   can append `2> stderr.log`, which will redirect the normal stderr log lines to a file for later reference, while
+   keeping the console and it's output (on stdout) visible in the shell.
    
 ### Full archive node on an Ethereum network
 

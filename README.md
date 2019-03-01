@@ -34,20 +34,25 @@ Ellaism users are asked to switch to
 
 Binary archives are published at https://github.com/ethoxy/multi-geth/releases.
 
+Upstream development from [ethereum/go-ethereum](https://github.com/ethereum/go-ethereum) is merged to this repository regularly,
+ usually at every upstream tagged release. Every effort is made to maintain seamless compatibility with upstream source, including congruent RPC, JS, and CLI
+ APIs, data storage locations and schemas, and, of course, interoperable client protocols. Applicable bug reports, bug fixes, features, and proposals should be
+ made upstream whenever possible.
+
 ## Managing versions
 
 Since this is a downstream fork of [ethereum/go-ethereum](https://github.com/ethereum/go-ethereum), you'll want to maintain the go import path and git remotes accordingly.
-This repository should occupy `$GOPATH/src/github.com/ethereum/go-ethereum`, and you can optionally use `git` to use this fork as a default upstream remote.
+This repository should occupy `$GOPATH/src/github.com/ethereum/go-ethereum`, and you can optionally use `git` to set this fork as a default upstream remote.
 On Linux or Mac, this can be accomplished by the following or similar.
 
-For a fresh install, the below. This will set [ethoxy/multi-geth](https://github.com/ethoxy/multi-geth) as as the `git` remote `origin` by default.
+For __a fresh install__, the below. This will set [ethoxy/multi-geth](https://github.com/ethoxy/multi-geth) as as the `git` remote `origin` by default.
 
 ```sh
 $ env path=$GOPATH/src/github.com/ethereum mkdir -p $path && cd $path
 $ git clone https://github.com/ethoxy/multi-geth.git go-ethereum && cd go-ethereum
 ```
 
-Or, with an existing copy of the ethereum/go-ethereum source, the below. This will set [ethoxy/multi-geth](https://github.com/ethoxy/multi-geth) as the `git` remote `ethoxy`,
+Or, with __an existing copy of the ethereum/go-ethereum source__, the below. This will set [ethoxy/multi-geth](https://github.com/ethoxy/multi-geth) as the `git` remote `ethoxy`,
 and set the local branch `master` to track this repository's `master` branch.
 
 ```sh

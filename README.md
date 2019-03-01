@@ -18,7 +18,7 @@ The included client binary `geth` provides support for the following networks.
 | -        | Kotti (Geth+Parity ETC PoA Testnet)   | `geth --kotti`                             | `~/.ethereum/kotti/`       |
 | -        | _dev_                                 | `geth --dev`                               | in-memory (ephemeral)      |
 
-:information: This is originally an [Ellaism
+:information_source: This is originally an [Ellaism
 Project](https://github.com/ellaism). However, A [recent hard
 fork](https://github.com/ellaism/specs/blob/master/specs/2018-0003-wasm-hardfork.md)
 makes Ellaism not feasible to support with go-ethereum any more. Existing

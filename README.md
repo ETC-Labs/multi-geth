@@ -11,19 +11,19 @@ https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/6874
 
 The included client binary `geth` provides support for the following networks.
 
-| Ticker   | Network                               | Usage | Default data dir           |
-| ---      | ---                                   | ---                                        | ---                        |
-| ETH      | Ethereum                              | `geth`                                     | `~/.ethereum/`             |
-| ETC      | Ethereum Classic                      | `geth --classic`                           | `~/.ethereum/classic/`     |
-| ETSC     | Ethereum Social                       | `geth --social`                            | `~/.ethereum/social/`      |
-| ESN      | EtherSocial                           | `geth --ethersocial`                       | `~/.ethereum/ethersocial/` |
-| MIX      | Mix                                   | `geth --mix`                               | `~/.ethereum/mix/`         |
-| ~~ELLA~~ | ~~Ellaism~~                           | ~~`geth --ellaism`~~                       | ~~`~/.ethereum/ellaism/`~~ |
-| -        | Ropsten (Geth+Parity ETH PoW Testnet) | `geth --testnet`                           | `~/.ethereum/ropsten/`     |
-| -        | Rinkeby (Geth-only ETH PoA Testnet)   | `geth --rinkeby`                           | `~/.ethereum/rinkeby/`     |
-| -        | Goerli (Geth+Parity ETH PoA Testnet)  | `geth --goerli`                            | `~/.ethereum/goerli/`      |
-| -        | Kotti (Geth+Parity ETC PoA Testnet)   | `geth --kotti`                             | `~/.ethereum/kotti/`       |
-| -        | _dev_                                 | `geth --dev`                               | in-memory (ephemeral)      |
+| Ticker   | Network                               | Usage                | Default data dir           |
+| ---      | ---                                   | ---                  | ---                        |
+| ETH      | Ethereum                              | `geth`               | `~/.ethereum/`             |
+| ETC      | Ethereum Classic                      | `geth --classic`     | `~/.ethereum/classic/`     |
+| ETSC     | Ethereum Social                       | `geth --social`      | `~/.ethereum/social/`      |
+| ESN      | EtherSocial                           | `geth --ethersocial` | `~/.ethereum/ethersocial/` |
+| MIX      | Mix                                   | `geth --mix`         | `~/.ethereum/mix/`         |
+| ~~ELLA~~ | ~~Ellaism~~                           | ~~`geth --ellaism`~~ | ~~`~/.ethereum/ellaism/`~~ |
+| -        | Ropsten (Geth+Parity ETH PoW Testnet) | `geth --testnet`     | `~/.ethereum/ropsten/`     |
+| -        | Rinkeby (Geth-only ETH PoA Testnet)   | `geth --rinkeby`     | `~/.ethereum/rinkeby/`     |
+| -        | Goerli (Geth+Parity ETH PoA Testnet)  | `geth --goerli`      | `~/.ethereum/goerli/`      |
+| -        | Kotti (Geth+Parity ETC PoA Testnet)   | `geth --kotti`       | `~/.ethereum/kotti/`       |
+| -        | Ephemeral development PoA network     | `geth --dev`         | in-memory only             |
 
 :information_source: This is originally an [Ellaism
 Project](https://github.com/ellaism). However, A [recent hard

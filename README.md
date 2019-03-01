@@ -19,11 +19,11 @@ The included client binary `geth` provides support for the following networks.
 | ESN      | EtherSocial                           | `geth --ethersocial` | `~/.ethereum/ethersocial/` |
 | MIX      | Mix                                   | `geth --mix`         | `~/.ethereum/mix/`         |
 | ~~ELLA~~ | ~~Ellaism~~                           | ~~`geth --ellaism`~~ | ~~`~/.ethereum/ellaism/`~~ |
-| -        | Ropsten (Geth+Parity ETH PoW Testnet) | `geth --testnet`     | `~/.ethereum/ropsten/`     |
-| -        | Rinkeby (Geth-only ETH PoA Testnet)   | `geth --rinkeby`     | `~/.ethereum/rinkeby/`     |
-| -        | Goerli (Geth+Parity ETH PoA Testnet)  | `geth --goerli`      | `~/.ethereum/goerli/`      |
-| -        | Kotti (Geth+Parity ETC PoA Testnet)   | `geth --kotti`       | `~/.ethereum/kotti/`       |
-| -        | Ephemeral development PoA network     | `geth --dev`         | in-memory only             |
+|          | Ropsten (Geth+Parity ETH PoW Testnet) | `geth --testnet`     | `~/.ethereum/ropsten/`     |
+|          | Rinkeby (Geth-only ETH PoA Testnet)   | `geth --rinkeby`     | `~/.ethereum/rinkeby/`     |
+|          | Goerli (Geth+Parity ETH PoA Testnet)  | `geth --goerli`      | `~/.ethereum/goerli/`      |
+|          | Kotti (Geth+Parity ETC PoA Testnet)   | `geth --kotti`       | `~/.ethereum/kotti/`       |
+|          | Ephemeral development PoA network     | `geth --dev`         | in-memory only             |
 
 :information_source: This is originally an [Ellaism
 Project](https://github.com/ellaism). However, A [recent hard

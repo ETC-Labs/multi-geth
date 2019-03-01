@@ -1,25 +1,32 @@
 ## Go Ethereum
 
-A distribution of the go-ethereum client and associated programs like `swarm`, `bootnode`, and `evm` with support for many species of Ethereum networks.
+A distribution of the go-ethereum client and codebase with support for many species of Ethereum networks.
 
-|                | `geth`             | `swarm` | `evm` |
-| ---            | ---                | ---     | ---   |
-| (ETH) Ethereum | :white_check_mark: |         |       |
+|                            | `geth`             | `bootnode`         | `evm`              | `clef`             | `ethkey`           | `p2psim`           | `rlpdump`          |
+| ---                        | ---                | ---                | ---                | ---                | ---                | ---                | ---                |
+| Ethereum (__ETH__)         | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Ethereum Classic (__ETC__) | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Social                     | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| EtherSocial                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Mix                        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Ropsten (ETH PoW Testnet)  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Rinkeby (ETH PoA Testnet)  | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Kotti (ETH PoA Testnet)    | :white_check_mark: | n/a                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Goerli (ETC PoA Testnet)   | :white_check_mark: | n/a                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 The multi-geth client binary `geth` provides support for the following networks.
 
-| Ticker | Network                   | How to run           | Default data dir           |
-| ---    | ---                       | ---                  | ---                        |
-| ETH    | Ethereum                  | `geth`               | `~/.ethereum/`             |
-| ETC    | Ethereum Classic          | `geth --classic`     | `~/.ethereum/classic/`     |
-|        | Social                    | `geth --social`      | `~/.ethereum/social/`      |
-|        | EtherSocial               | `geth --ethersocial` | `~/.ethereum/ethersocial/` |
-|        | Mix                       | `geth --mix`         | `~/.ethereum/mix/`         |
-| n/a    | Ropsten (ETH POW Testnet) | `geth --testnet`     | `~/.ethereum/ropsten/`     |
-| n/a    | Rinkeby (ETH POA Testnet) | `geth --rinkeby`     | `~/.ethereum/rinkeby/`     |
-| n/a    | Kotti                     | `geth --kotti`       | `~/.ethereum/kotti/`       |
-| n/a    | Goerli                    | `geth --goerli`      | `~/.ethereum/goerli/`      |
-|        |                           |                      |                            |
+| Ticker | Network                   | How to run a `geth` client on this network | Default data dir           |
+| ---    | ---                       | ---                                        | ---                        |
+| ETH    | Ethereum                  | `geth`                                     | `~/.ethereum/`             |
+| ETC    | Ethereum Classic          | `geth --classic`                           | `~/.ethereum/classic/`     |
+| ETSC   | Ethereum Social           | `geth --social`                            | `~/.ethereum/social/`      |
+| ESN    | EtherSocial               | `geth --ethersocial`                       | `~/.ethereum/ethersocial/` |
+| MIX    | Mix                       | `geth --mix`                               | `~/.ethereum/mix/`         |
+| -      | Ropsten (ETH POW Testnet) | `geth --testnet`                           | `~/.ethereum/ropsten/`     |
+| -      | Rinkeby (ETH POA Testnet) | `geth --rinkeby`                           | `~/.ethereum/rinkeby/`     |
+| -      | Kotti                     | `geth --kotti`                             | `~/.ethereum/kotti/`       |
+| -      | Goerli                    | `geth --goerli`                            | `~/.ethereum/goerli/`      |
 
 [![API Reference](
 https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
@@ -82,16 +89,16 @@ Ellaism users are asked to switch to
 
 The go-ethereum project comes with several wrappers/executables found in the `cmd` directory.
 
-| Command    | Description |
-|:----------:|-------------|
-| **`geth`** | Our main Ethereum CLI client. It is the entry point into the Ethereum network (main-, test- or private net), capable of running as a full node (default), archive node (retaining all historical state) or a light node (retrieving data live). It can be used by other processes as a gateway into the Ethereum network via JSON RPC endpoints exposed on top of HTTP, WebSocket and/or IPC transports. `geth --help` and the [CLI Wiki page](https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options) for command line options. |
-| `abigen` | Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages. It operates on plain [Ethereum contract ABIs](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI) with expanded functionality if the contract bytecode is also available. However, it also accepts Solidity source files, making development much more streamlined. Please see our [Native DApps](https://github.com/ethereum/go-ethereum/wiki/Native-DApps:-Go-bindings-to-Ethereum-contracts) wiki page for details. |
-| `bootnode` | Stripped down version of our Ethereum client implementation that only takes part in the network node discovery protocol, but does not run any of the higher level application protocols. It can be used as a lightweight bootstrap node to aid in finding peers in private networks. |
-| `evm` | Developer utility version of the EVM (Ethereum Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode. Its purpose is to allow isolated, fine-grained debugging of EVM opcodes (e.g. `evm --code 60ff60ff --debug`). |
-| `gethrpctest` | Developer utility tool to support our [ethereum/rpc-test](https://github.com/ethereum/rpc-tests) test suite which validates baseline conformity to the [Ethereum JSON RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC) specs. Please see the [test suite's readme](https://github.com/ethereum/rpc-tests/blob/master/README.md) for details. |
-| `rlpdump` | Developer utility tool to convert binary RLP ([Recursive Length Prefix](https://github.com/ethereum/wiki/wiki/RLP)) dumps (data encoding used by the Ethereum protocol both network as well as consensus wise) to user-friendlier hierarchical representation (e.g. `rlpdump --hex CE0183FFFFFFC4C304050583616263`). |
-| `swarm`    | Swarm daemon and tools. This is the entry point for the Swarm network. `swarm --help` for command line options and subcommands. See [Swarm README](https://github.com/ethereum/go-ethereum/tree/master/swarm) for more information. |
-| `puppeth`    | a CLI wizard that aids in creating a new Ethereum network. |
+| Command       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| :----------:  | -------------                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| **`geth`**    | Our main Ethereum CLI client. It is the entry point into the Ethereum network (main-, test- or private net), capable of running as a full node (default), archive node (retaining all historical state) or a light node (retrieving data live). It can be used by other processes as a gateway into the Ethereum network via JSON RPC endpoints exposed on top of HTTP, WebSocket and/or IPC transports. `geth --help` and the [CLI Wiki page](https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options) for command line options.          |
+| `abigen`      | Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages. It operates on plain [Ethereum contract ABIs](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI) with expanded functionality if the contract bytecode is also available. However, it also accepts Solidity source files, making development much more streamlined. Please see our [Native DApps](https://github.com/ethereum/go-ethereum/wiki/Native-DApps:-Go-bindings-to-Ethereum-contracts) wiki page for details. |
+| `bootnode`    | Stripped down version of our Ethereum client implementation that only takes part in the network node discovery protocol, but does not run any of the higher level application protocols. It can be used as a lightweight bootstrap node to aid in finding peers in private networks.                                                                                                                                                                                                                                                                 |
+| `evm`         | Developer utility version of the EVM (Ethereum Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode. Its purpose is to allow isolated, fine-grained debugging of EVM opcodes (e.g. `evm --code 60ff60ff --debug`).                                                                                                                                                                                                                                                                     |
+| `gethrpctest` | Developer utility tool to support our [ethereum/rpc-test](https://github.com/ethereum/rpc-tests) test suite which validates baseline conformity to the [Ethereum JSON RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC) specs. Please see the [test suite's readme](https://github.com/ethereum/rpc-tests/blob/master/README.md) for details.                                                                                                                                                                                                     |
+| `rlpdump`     | Developer utility tool to convert binary RLP ([Recursive Length Prefix](https://github.com/ethereum/wiki/wiki/RLP)) dumps (data encoding used by the Ethereum protocol both network as well as consensus wise) to user-friendlier hierarchical representation (e.g. `rlpdump --hex CE0183FFFFFFC4C304050583616263`).                                                                                                                                                                                                                                 |
+| `swarm`       | Swarm daemon and tools. This is the entry point for the Swarm network. `swarm --help` for command line options and subcommands. See [Swarm README](https://github.com/ethereum/go-ethereum/tree/master/swarm) for more information.                                                                                                                                                                                                                                                                                                                  |
+| `puppeth`     | a CLI wizard that aids in creating a new Ethereum network.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 ## Running geth
 

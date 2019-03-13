@@ -58,13 +58,11 @@ func (abi ABI) Pack(name string, args ...interface{}) ([]byte, error) {
 			return nil, err
 		}
 		return arguments, nil
-
 	}
 	method, exist := abi.Methods[name]
 	if !exist {
 		return nil, fmt.Errorf("method '%s' not found", name)
 	}
-
 	arguments, err := method.Inputs.Pack(args...)
 	if err != nil {
 		return nil, err
@@ -138,7 +136,7 @@ func (abi *ABI) UnmarshalJSON(data []byte) error {
 // returns nil if none found
 func (abi *ABI) MethodById(sigdata []byte) (*Method, error) {
 	if len(sigdata) < 4 {
-		return nil, fmt.Errorf("data too short (% bytes) for abi method lookup", len(sigdata))
+		return nil, fmt.Errorf("data too short (%d bytes) for abi method lookup", len(sigdata))
 	}
 	for _, method := range abi.Methods {
 		if bytes.Equal(method.Id(), sigdata[:4]) {

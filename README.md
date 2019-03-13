@@ -1,6 +1,6 @@
 ## Go Ethereum
 
-A distribution of go-ethereum with support of multiple Ethereum-like networks.
+Official Golang implementation of the Ethereum protocol.
 
 [![API Reference](
 https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
@@ -43,12 +43,12 @@ The go-ethereum project comes with several wrappers/executables found in the `cm
 | Command    | Description |
 |:----------:|-------------|
 | **`geth`** | Our main Ethereum CLI client. It is the entry point into the Ethereum network (main-, test- or private net), capable of running as a full node (default), archive node (retaining all historical state) or a light node (retrieving data live). It can be used by other processes as a gateway into the Ethereum network via JSON RPC endpoints exposed on top of HTTP, WebSocket and/or IPC transports. `geth --help` and the [CLI Wiki page](https://github.com/ethereum/go-ethereum/wiki/Command-Line-Options) for command line options. |
-| `abigen` | Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages. It operates on plain [Ethereum contract ABIs](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI) with expanded functionality if the contract bytecode is also available. However it also accepts Solidity source files, making development much more streamlined. Please see our [Native DApps](https://github.com/ethereum/go-ethereum/wiki/Native-DApps:-Go-bindings-to-Ethereum-contracts) wiki page for details. |
+| `abigen` | Source code generator to convert Ethereum contract definitions into easy to use, compile-time type-safe Go packages. It operates on plain [Ethereum contract ABIs](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI) with expanded functionality if the contract bytecode is also available. However, it also accepts Solidity source files, making development much more streamlined. Please see our [Native DApps](https://github.com/ethereum/go-ethereum/wiki/Native-DApps:-Go-bindings-to-Ethereum-contracts) wiki page for details. |
 | `bootnode` | Stripped down version of our Ethereum client implementation that only takes part in the network node discovery protocol, but does not run any of the higher level application protocols. It can be used as a lightweight bootstrap node to aid in finding peers in private networks. |
 | `evm` | Developer utility version of the EVM (Ethereum Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode. Its purpose is to allow isolated, fine-grained debugging of EVM opcodes (e.g. `evm --code 60ff60ff --debug`). |
 | `gethrpctest` | Developer utility tool to support our [ethereum/rpc-test](https://github.com/ethereum/rpc-tests) test suite which validates baseline conformity to the [Ethereum JSON RPC](https://github.com/ethereum/wiki/wiki/JSON-RPC) specs. Please see the [test suite's readme](https://github.com/ethereum/rpc-tests/blob/master/README.md) for details. |
-| `rlpdump` | Developer utility tool to convert binary RLP ([Recursive Length Prefix](https://github.com/ethereum/wiki/wiki/RLP)) dumps (data encoding used by the Ethereum protocol both network as well as consensus wise) to user friendlier hierarchical representation (e.g. `rlpdump --hex CE0183FFFFFFC4C304050583616263`). |
-| `swarm`    | Swarm daemon and tools. This is the entrypoint for the Swarm network. `swarm --help` for command line options and subcommands. See [Swarm README](https://github.com/ethereum/go-ethereum/tree/master/swarm) for more information. |
+| `rlpdump` | Developer utility tool to convert binary RLP ([Recursive Length Prefix](https://github.com/ethereum/wiki/wiki/RLP)) dumps (data encoding used by the Ethereum protocol both network as well as consensus wise) to user-friendlier hierarchical representation (e.g. `rlpdump --hex CE0183FFFFFFC4C304050583616263`). |
+| `swarm`    | Swarm daemon and tools. This is the entry point for the Swarm network. `swarm --help` for command line options and subcommands. See [Swarm README](https://github.com/ethereum/go-ethereum/tree/master/swarm) for more information. |
 | `puppeth`    | a CLI wizard that aids in creating a new Ethereum network. |
 
 ## Running geth
@@ -80,7 +80,7 @@ This command will:
    This tool is optional and if you leave it out you can always attach to an already running Geth instance
    with `geth attach`.
 
-### Full node on the main Ellaism network
+### A Full node on the Ethereum test network
 
 To get on Ellaism network and take advantage of fast-sync:
 
@@ -88,21 +88,10 @@ To get on Ellaism network and take advantage of fast-sync:
 $ geth --ellaism console
 ```
 
-This command will:
+The `console` subcommand has the exact same meaning as above and they are equally useful on the
+testnet too. Please see above for their explanations if you've skipped here.
 
- * Start geth in fast sync mode and start up geth's built-in interactive JavaScript console,
-   connecting to Ellaism network.
- * Default data directory will be `~/.ethereum/ellaism`.
-
-### Full node on the main Ethereum Classic network
-
-To get on Ethereum Classic network and take advantage of fast-sync:
-
-```
-$ geth --classic console
-```
-
-This command will:
+Specifying the `--testnet` flag, however, will reconfigure your Geth instance a bit:
 
  * Start geth in fast sync mode and start up geth's built-in interactive JavaScript console,
    connecting to Ethereum Classic network.
@@ -110,7 +99,7 @@ This command will:
 
 ### All networks
 
-For a full list of networks supported by multi-geth, take a look at the command-line help messages:
+The above test network is a cross-client one based on the ethash proof-of-work consensus algorithm. As such, it has certain extra overhead and is more susceptible to reorganization attacks due to the network's low difficulty/security. Go Ethereum also supports connecting to a proof-of-authority based test network called [*Rinkeby*](https://www.rinkeby.io) (operated by members of the community). This network is lighter, more secure, but is only supported by go-ethereum.
 
 ```
 --testnet                            Ropsten network: pre-configured proof-of-work test network
@@ -152,13 +141,13 @@ This will start geth in fast-sync mode with a DB memory allowance of 1GB just as
 
 Do not forget `--rpcaddr 0.0.0.0`, if you want to access RPC from other containers and/or hosts. By default, `geth` binds to the local interface and RPC endpoints is not accessible from the outside.
 
-### Programatically interfacing Geth nodes
+### Programmatically interfacing Geth nodes
 
 As a developer, sooner rather than later you'll want to start interacting with Geth and the Ethereum
 network via your own programs and not manually through the console. To aid this, Geth has built-in
 support for a JSON-RPC based APIs ([standard APIs](https://github.com/ethereum/wiki/wiki/JSON-RPC) and
 [Geth specific APIs](https://github.com/ethereum/go-ethereum/wiki/Management-APIs)). These can be
-exposed via HTTP, WebSockets and IPC (unix sockets on unix based platforms, and named pipes on Windows).
+exposed via HTTP, WebSockets and IPC (UNIX sockets on UNIX based platforms, and named pipes on Windows).
 
 The IPC interface is enabled by default and exposes all the APIs supported by Geth, whereas the HTTP
 and WS interfaces need to manually be enabled and only expose a subset of APIs due to security reasons.
@@ -186,7 +175,7 @@ on all transports. You can reuse the same connection for multiple requests!
 
 **Note: Please understand the security implications of opening up an HTTP/WS based transport before
 doing so! Hackers on the internet are actively trying to subvert Ethereum nodes with exposed APIs!
-Further, all browser tabs can access locally running webservers, so malicious webpages could try to
+Further, all browser tabs can access locally running web servers, so malicious web pages could try to
 subvert locally available APIs!**
 
 ### Operating a private network
@@ -254,7 +243,7 @@ that other nodes can use to connect to it and exchange peer information. Make su
 displayed IP address information (most probably `[::]`) with your externally accessible IP to get the
 actual `enode` URL.
 
-*Note: You could also use a full fledged Geth node as a bootnode, but it's the less recommended way.*
+*Note: You could also use a full-fledged Geth node as a bootnode, but it's the less recommended way.*
 
 #### Starting up your member nodes
 
@@ -277,7 +266,7 @@ an OpenCL or CUDA enabled `ethminer` instance. For information on such a setup, 
 [EtherMining subreddit](https://www.reddit.com/r/EtherMining/) and the [Genoil miner](https://github.com/Genoil/cpp-ethereum)
 repository.
 
-In a private network setting however, a single CPU miner instance is more than enough for practical
+In a private network setting, however a single CPU miner instance is more than enough for practical
 purposes as it can produce a stable stream of blocks at the correct intervals without needing heavy
 resources (consider running on a single thread, no need for multiple ones either). To start a Geth
 instance for mining, run it with all your usual flags, extended by:
@@ -311,7 +300,7 @@ Please make sure your contributions adhere to our coding guidelines:
    * E.g. "eth, rpc: make trace configs optional"
 
 Please see the [Developers' Guide](https://github.com/ethereum/go-ethereum/wiki/Developers'-Guide)
-for more details on configuring your environment, managing project dependencies and testing procedures.
+for more details on configuring your environment, managing project dependencies, and testing procedures.
 
 ## License
 

@@ -43,8 +43,9 @@ type (
 // run runs the given contract and takes care of running precompiles with a fallback to the byte code interpreter.
 func run(evm *EVM, contract *Contract, input []byte, readOnly bool) ([]byte, error) {
 	if contract.CodeAddr != nil {
-		if IsPrecompiledContractEnabled(evm.ChainConfig(), evm.BlockNumber, *contract.CodeAddr) {
-			return RunPrecompiledContract(AllPrecompiledContracts[*contract.CodeAddr], input, contract)
+		precomps := PrecompiledContractsForConfig(evm.ChainConfig(), evm.BlockNumber)
+		if p := precomps[*contract.CodeAddr]; p != nil {
+			return RunPrecompiledContract(p, input, contract)
 		}
 	}
 	for _, interpreter := range evm.interpreters {
@@ -193,7 +194,8 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 		snapshot = evm.StateDB.Snapshot()
 	)
 	if !evm.StateDB.Exist(addr) {
-		if !IsPrecompiledContractEnabled(evm.ChainConfig(), evm.BlockNumber, addr) && evm.ChainConfig().IsEIP161F(evm.BlockNumber) && value.Sign() == 0 {
+		precomps := PrecompiledContractsForConfig(evm.ChainConfig(), evm.BlockNumber)
+		if precomps[addr] == nil && evm.ChainConfig().IsEIP161F(evm.BlockNumber) && value.Sign() == 0 {
 			// Calling a non existing account, don't do anything, but ping the tracer
 			if evm.vmConfig.Debug && evm.depth == 0 {
 				evm.vmConfig.Tracer.CaptureStart(caller.Address(), addr, false, input, gas, value)
@@ -423,7 +425,7 @@ func (evm *EVM) create(caller ContractRef, codeAndHash *codeAndHash, gas uint64,
 	// When an error was returned by the EVM or when setting the creation code
 	// above we revert to the snapshot and consume any gas remaining. Additionally
 	// when we're in homestead this also counts for code storage gas errors.
-	if maxCodeSizeExceeded || (err != nil && (evm.ChainConfig().IsHomestead(evm.BlockNumber) || err != ErrCodeStoreOutOfGas)) {
+	if maxCodeSizeExceeded || (err != nil && (evm.ChainConfig().IsEIP2F(evm.BlockNumber) || err != ErrCodeStoreOutOfGas)) {
 		evm.StateDB.RevertToSnapshot(snapshot)
 		if err != errExecutionReverted {
 			contract.UseGas(contract.Gas)

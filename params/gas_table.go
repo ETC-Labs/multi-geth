@@ -63,6 +63,7 @@ var (
 
 		CreateBySuicide: 25000,
 	}
+
 	// GasTableEIP160 contain the gas re-prices for
 	// the EIP155/EIP158 phase.
 	GasTableEIP160 = GasTable{
@@ -76,6 +77,7 @@ var (
 
 		CreateBySuicide: 25000,
 	}
+
 	// GasTableEIP1052 contain the gas re-prices for
 	// the constantinople phase.
 	GasTableEIP1052 = GasTable{

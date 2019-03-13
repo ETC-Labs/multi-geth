@@ -136,6 +136,26 @@ var (
 		Name:  "testnet",
 		Usage: "Ropsten network: pre-configured proof-of-work test network",
 	}
+	EllaismFlag = cli.BoolFlag{
+		Name:  "ellaism",
+		Usage: "Ellaism network: pre-configured Ellaism mainnet",
+	}
+	ClassicFlag = cli.BoolFlag{
+		Name:  "classic",
+		Usage: "Ethereum Classic network: pre-configured Ethereum Classic mainnet",
+	}
+	SocialFlag = cli.BoolFlag{
+		Name:  "social",
+		Usage: "Ethereum Social network: pre-configured Ethereum Social mainnet",
+	}
+	MixFlag = cli.BoolFlag{
+		Name:  "mix",
+		Usage: "MIX network: pre-configured MIX mainnet",
+	}
+	EthersocialFlag = cli.BoolFlag{
+		Name:  "ethersocial",
+		Usage: "Ethersocial network: pre-configured Ethersocial mainnet",
+	}
 	RinkebyFlag = cli.BoolFlag{
 		Name:  "rinkeby",
 		Usage: "Rinkeby network: pre-configured proof-of-authority test network",
@@ -644,6 +664,21 @@ func MakeDataDir(ctx *cli.Context) string {
 		if ctx.GlobalBool(TestnetFlag.Name) {
 			return filepath.Join(path, "testnet")
 		}
+		if ctx.GlobalBool(EllaismFlag.Name) {
+			return filepath.Join(path, "ellaism")
+		}
+		if ctx.GlobalBool(ClassicFlag.Name) {
+			return filepath.Join(path, "classic")
+		}
+		if ctx.GlobalBool(SocialFlag.Name) {
+			return filepath.Join(path, "social")
+		}
+		if ctx.GlobalBool(MixFlag.Name) {
+			return filepath.Join(path, "mix")
+		}
+		if ctx.GlobalBool(EthersocialFlag.Name) {
+			return filepath.Join(path, "ethersocial")
+		}
 		if ctx.GlobalBool(RinkebyFlag.Name) {
 			return filepath.Join(path, "rinkeby")
 		}
@@ -699,6 +734,16 @@ func setBootstrapNodes(ctx *cli.Context, cfg *p2p.Config) {
 		}
 	case ctx.GlobalBool(TestnetFlag.Name):
 		urls = params.TestnetBootnodes
+	case ctx.GlobalBool(EllaismFlag.Name):
+		urls = params.EllaismBootnodes
+	case ctx.GlobalBool(ClassicFlag.Name):
+		urls = params.ClassicBootnodes
+	case ctx.GlobalBool(SocialFlag.Name):
+		urls = params.SocialBootnodes
+	case ctx.GlobalBool(MixFlag.Name):
+		urls = params.MixBootnodes
+	case ctx.GlobalBool(EthersocialFlag.Name):
+		urls = params.EthersocialBootnodes
 	case ctx.GlobalBool(RinkebyFlag.Name):
 		urls = params.RinkebyBootnodes
 	case cfg.BootstrapNodes != nil:
@@ -980,7 +1025,6 @@ func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
 	setHTTP(ctx, cfg)
 	setWS(ctx, cfg)
 	setNodeUserIdent(ctx, cfg)
-
 	setDataDir(ctx, cfg)
 
 	if ctx.GlobalIsSet(KeyStoreDirFlag.Name) {
@@ -1002,6 +1046,16 @@ func setDataDir(ctx *cli.Context, cfg *node.Config) {
 		cfg.DataDir = "" // unless explicitly requested, use memory databases
 	case ctx.GlobalBool(TestnetFlag.Name):
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet")
+	case ctx.GlobalBool(EllaismFlag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "ellaism")
+	case ctx.GlobalBool(ClassicFlag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "classic")
+	case ctx.GlobalBool(SocialFlag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "social")
+	case ctx.GlobalBool(MixFlag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "mix")
+	case ctx.GlobalBool(EthersocialFlag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "ethersocial")
 	case ctx.GlobalBool(RinkebyFlag.Name):
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "rinkeby")
 	}
@@ -1160,8 +1214,15 @@ func SetShhConfig(ctx *cli.Context, stack *node.Node, cfg *whisper.Config) {
 // SetEthConfig applies eth-related command line flags to the config.
 func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *eth.Config) {
 	// Avoid conflicting network flags
-	checkExclusive(ctx, DeveloperFlag, TestnetFlag, RinkebyFlag)
+	checkExclusive(ctx, DeveloperFlag, TestnetFlag, RinkebyFlag, EllaismFlag, ClassicFlag, SocialFlag, MixFlag, EthersocialFlag)
 	checkExclusive(ctx, LightServFlag, SyncModeFlag, "light")
+
+	if ctx.GlobalIsSet(EllaismFlag.Name) {
+		log.Warn("-------------------------------------------------------------------")
+		log.Warn("multi-geth Ellaism support is deprecated, please upgrade to Parity")
+		log.Warn("(https://github.com/paritytech/parity) before block 2,000,000.")
+		log.Warn("-------------------------------------------------------------------")
+	}
 
 	ks := stack.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
 	setEtherbase(ctx, ks, cfg)
@@ -1251,11 +1312,36 @@ func SetEthConfig(ctx *cli.Context, stack *node.Node, cfg *eth.Config) {
 			cfg.NetworkId = 3
 		}
 		cfg.Genesis = core.DefaultTestnetGenesisBlock()
+	case ctx.GlobalBool(EllaismFlag.Name):
+		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
+			cfg.NetworkId = 64
+		}
+		cfg.Genesis = core.DefaultEllaismGenesisBlock()
+	case ctx.GlobalBool(ClassicFlag.Name):
+		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
+			cfg.NetworkId = 1
+		}
+		cfg.Genesis = core.DefaultClassicGenesisBlock()
+	case ctx.GlobalBool(SocialFlag.Name):
+		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
+			cfg.NetworkId = 28
+		}
+		cfg.Genesis = core.DefaultSocialGenesisBlock()
+	case ctx.GlobalBool(EthersocialFlag.Name):
+		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
+			cfg.NetworkId = 1
+		}
+		cfg.Genesis = core.DefaultEthersocialGenesisBlock()
 	case ctx.GlobalBool(RinkebyFlag.Name):
 		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
 			cfg.NetworkId = 4
 		}
 		cfg.Genesis = core.DefaultRinkebyGenesisBlock()
+	case ctx.GlobalBool(MixFlag.Name):
+		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
+			cfg.NetworkId = 76
+		}
+		cfg.Genesis = core.DefaultMixGenesisBlock()
 	case ctx.GlobalBool(DeveloperFlag.Name):
 		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
 			cfg.NetworkId = 1337
@@ -1394,6 +1480,16 @@ func MakeGenesis(ctx *cli.Context) *core.Genesis {
 	switch {
 	case ctx.GlobalBool(TestnetFlag.Name):
 		genesis = core.DefaultTestnetGenesisBlock()
+	case ctx.GlobalBool(EllaismFlag.Name):
+		genesis = core.DefaultEllaismGenesisBlock()
+	case ctx.GlobalBool(ClassicFlag.Name):
+		genesis = core.DefaultClassicGenesisBlock()
+	case ctx.GlobalBool(SocialFlag.Name):
+		genesis = core.DefaultSocialGenesisBlock()
+	case ctx.GlobalBool(MixFlag.Name):
+		genesis = core.DefaultMixGenesisBlock()
+	case ctx.GlobalBool(EthersocialFlag.Name):
+		genesis = core.DefaultEthersocialGenesisBlock()
 	case ctx.GlobalBool(RinkebyFlag.Name):
 		genesis = core.DefaultRinkebyGenesisBlock()
 	case ctx.GlobalBool(DeveloperFlag.Name):

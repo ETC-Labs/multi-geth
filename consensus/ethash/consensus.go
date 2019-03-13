@@ -325,7 +325,7 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 	case config.IsEIP100F(next):
 		// TODO: calculator for only EIP100:mean time adjustment (without EIP649:difficulty bomb delay)
 		panic("not implemented")
-	case config.IsHomestead(next):
+	case config.IsEIP2F(next):
 		return calcDifficultyHomestead(time, parent)
 	default:
 		return calcDifficultyFrontier(time, parent)
@@ -403,6 +403,155 @@ func makeDifficultyCalculator(bombDelay *big.Int) func(time uint64, parent *type
 		}
 		return x
 	}
+}
+
+// calcDifficultyBombDisposal is the difficulty adjustment algorithm. It returns
+// the difficulty that a new block should have when created at time given the
+// parent block's time and difficulty. The calculation uses the Homestead/Bomb
+// Disposal rules.
+func calcDifficultyBombDisposal(time uint64, parent *types.Header) *big.Int {
+	// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2.md
+	// algorithm:
+	// diff = (parent_diff +
+	//         (parent_diff / 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
+	//        )
+
+	bigTime := new(big.Int).SetUint64(time)
+	bigParentTime := new(big.Int).Set(parent.Time)
+
+	// holds intermediate values to make the algo easier to read & audit
+	x := new(big.Int)
+	y := new(big.Int)
+
+	// 1 - (block_timestamp - parent_timestamp) // 10
+	x.Sub(bigTime, bigParentTime)
+	x.Div(x, big10)
+	x.Sub(big1, x)
+
+	// max(1 - (block_timestamp - parent_timestamp) // 10, -99)
+	if x.Cmp(bigMinus99) < 0 {
+		x.Set(bigMinus99)
+	}
+	// (parent_diff + parent_diff // 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
+	y.Div(parent.Difficulty, params.DifficultyBoundDivisor)
+	x.Mul(y, x)
+	x.Add(parent.Difficulty, x)
+
+	// minimum difficulty can ever be (before exponential factor)
+	if x.Cmp(params.MinimumDifficulty) < 0 {
+		x.Set(params.MinimumDifficulty)
+	}
+
+	return x
+}
+
+func calcDifficultyECIP1010(time uint64, parent *types.Header, nextBlock *big.Int, pauseBlock *big.Int, length *big.Int) *big.Int {
+	explosionBlock := big.NewInt(0).Add(pauseBlock, length)
+	if nextBlock.Cmp(explosionBlock) < 0 {
+		return calcDifficultyDiehard(time, parent.Time.Uint64(), parent.Difficulty, pauseBlock)
+	} else {
+		return calcDifficultyExplosion(time, parent.Time.Uint64(), parent.Number, parent.Difficulty, pauseBlock, explosionBlock)
+	}
+}
+
+func calcDifficultyDiehard(time, parentTime uint64, parentDiff *big.Int, diehardBlock *big.Int) *big.Int {
+	// https://github.com/ethereumproject/ECIPs/blob/master/ECIPS/ECIP-1010.md
+	// algorithm:
+	// diff = (parent_diff +
+	//         (parent_diff / 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
+	//        ) + 2^(fixed_diff)
+
+	bigTime := new(big.Int).SetUint64(time)
+	bigParentTime := new(big.Int).SetUint64(parentTime)
+
+	// holds intermediate values to make the algo easier to read & audit
+	x := new(big.Int)
+	y := new(big.Int)
+
+	// 1 - (block_timestamp -parent_timestamp) // 10
+	x.Sub(bigTime, bigParentTime)
+	x.Div(x, big10)
+	x.Sub(common.Big1, x)
+
+	// max(1 - (block_timestamp - parent_timestamp) // 10, -99)))
+	if x.Cmp(bigMinus99) < 0 {
+		x.Set(bigMinus99)
+	}
+
+	// (parent_diff + parent_diff // 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
+	y.Div(parentDiff, params.DifficultyBoundDivisor)
+	x.Mul(y, x)
+	x.Add(parentDiff, x)
+
+	// minimum difficulty can ever be (before exponential factor)
+	if x.Cmp(params.MinimumDifficulty) < 0 {
+		x.Set(params.MinimumDifficulty)
+	}
+
+	// for the exponential factor
+	fixedCount := new(big.Int).Div(diehardBlock, ExpDiffPeriod)
+
+	// the exponential factor, commonly referred to as "the bomb"
+	// diff = diff + 2^(periodCount - 2)
+	if fixedCount.Cmp(common.Big1) > 0 {
+		y.Sub(fixedCount, common.Big2)
+		y.Exp(common.Big2, y, nil)
+		x.Add(x, y)
+	}
+
+	return x
+}
+
+func calcDifficultyExplosion(time, parentTime uint64, parentNumber, parentDiff *big.Int, delayBlock *big.Int, continueBlock *big.Int) *big.Int {
+	// https://github.com/ethereumproject/ECIPs/blob/master/ECIPs/ECIP-1010.md
+	// algorithm:
+	// diff = (parent_diff +
+	//         (parent_diff / 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
+	//        ) + 2^(delayedCount - 2)
+
+	bigTime := new(big.Int).SetUint64(time)
+	bigParentTime := new(big.Int).SetUint64(parentTime)
+
+	// holds intermediate values to make the algo easier to read & audit
+	x := new(big.Int)
+	y := new(big.Int)
+
+	// 1 - (block_timestamp -parent_timestamp) // 10
+	x.Sub(bigTime, bigParentTime)
+	x.Div(x, big10)
+	x.Sub(common.Big1, x)
+
+	// max(1 - (block_timestamp - parent_timestamp) // 10, -99)))
+	if x.Cmp(bigMinus99) < 0 {
+		x.Set(bigMinus99)
+	}
+
+	// (parent_diff + parent_diff // 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
+	y.Div(parentDiff, params.DifficultyBoundDivisor)
+	x.Mul(y, x)
+	x.Add(parentDiff, x)
+
+	// minimum difficulty can ever be (before exponential factor)
+	if x.Cmp(params.MinimumDifficulty) < 0 {
+		x.Set(params.MinimumDifficulty)
+	}
+
+	// for the exponential factor...
+
+	delayedCount := new(big.Int).Add(parentNumber, common.Big1)
+	delayedCount.Sub(delayedCount, continueBlock)
+	delayedCount.Add(delayedCount, delayBlock)
+	delayedCount.Div(delayedCount, ExpDiffPeriod)
+
+	// the exponential factor, commonly referred to as "the bomb"
+	// diff = diff + 2^(periodCount - 2)
+	if delayedCount.Cmp(common.Big1) > 0 {
+		y.Sub(delayedCount, common.Big2)
+		y.Exp(common.Big2, y, nil)
+		x.Add(x, y)
+	}
+
+	return x
 }
 
 // calcDifficultyHomestead is the difficulty adjustment algorithm. It returns

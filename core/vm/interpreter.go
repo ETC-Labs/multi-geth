@@ -99,7 +99,7 @@ func NewEVMInterpreter(evm *EVM, cfg Config) *EVMInterpreter {
 	// the jump table was initialised. If it was not
 	// we'll set the default jump table.
 	if !cfg.JumpTable[STOP].valid {
-		cfg.JumpTable = baseInstructionSet
+		cfg.JumpTable = instructionSetForConfig(evm.ChainConfig(), evm.BlockNumber)
 	}
 
 	return &EVMInterpreter{

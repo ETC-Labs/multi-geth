@@ -24,6 +24,7 @@ import (
 	"math"
 	"math/big"
 	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -219,18 +220,17 @@ func gatherForks(config *params.ChainConfig) []uint64 {
 		}
 		// Extract the fork rule block number and aggregate it
 		rule := conf.Field(i).Interface().(*big.Int)
-		if rule != nil {
+
+		// Skip any forks in block 0, that's the genesis ruleset
+		if rule != nil && rule.Uint64() != 0 {
 			forks = append(forks, rule.Uint64())
 		}
 	}
 	// Sort the fork block numbers to permit chronologival XOR
-	for i := 0; i < len(forks); i++ {
-		for j := i + 1; j < len(forks); j++ {
-			if forks[i] > forks[j] {
-				forks[i], forks[j] = forks[j], forks[i]
-			}
-		}
-	}
+	sort.Slice(forks, func(i, j int) bool {
+		return forks[i] < forks[j]
+	})
+	
 	// Deduplicate block numbers applying multiple forks
 	for i := 1; i < len(forks); i++ {
 		if forks[i] == forks[i-1] {
@@ -238,9 +238,6 @@ func gatherForks(config *params.ChainConfig) []uint64 {
 			i--
 		}
 	}
-	// Skip any forks in block 0, that's the genesis ruleset
-	if len(forks) > 0 && forks[0] == 0 {
-		forks = forks[1:]
-	}
+
 	return forks
 }

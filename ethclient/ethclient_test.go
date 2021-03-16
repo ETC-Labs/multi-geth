@@ -307,12 +307,44 @@ func testHeader(t *testing.T, chain []*types.Block, client *rpc.Client) {
 			block: big.NewInt(-1),
 			testFn: func(got *types.Header) error {
 				var errors []error
+
+				// Test difficulty is not nil.
+				// This is an example validation on a field that (almost certainly?) should exist.
+				// In fact, this test fails.
+				// Here's what gets logged:
+				/*
+					pending got: {
+					            "parentHash": "0x228d7580ae75567749daa5ed31ff1fcc09803ebe001b44f64b0f364c19bff4cb",
+					            "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+					            "miner": "0x0000000000000000000000000000000000000000",
+					            "stateRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+					            "transactionsRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+					            "receiptsRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+					            "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+					            "difficulty": null,
+					            "number": null,
+					            "gasLimit": "0x0",
+					            "gasUsed": "0x0",
+					            "timestamp": "0x0",
+					            "extraData": "0x",
+					            "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+					            "nonce": "0x0000000000000000",
+					            "hash": "0xc5343d7f4960fbc487e877585726949b6a36150e3ed7cd0954741f467b98d0b8"
+					        }
+				*/
+				// Some questions and/or analysis:
+				// (See https://eth.wiki/json-rpc/API for documentation).
+				// - sha3Uncles: Why is this filled? (And other fields not?)
+				// - Other fields are null or zero values... according to the documentation they (at least some of them) should be filled.
+				//
+				// This may be related to types.Header JSON Unmarshaling, which
+				// is not designed to accommodate invalid headers (and which the pending block, per documentation, is).
 				if got.Difficulty == nil {
 					errors = append(errors, fmt.Errorf("difficulty: want: %v, got: %v", "non-nil", got.Difficulty))
 				}
 
 				if len(errors) != 0 {
-					// Debug log
+					// Debug log, eg. comment above.
 					b, _ := json.MarshalIndent(got, "", "    ")
 					t.Logf("pending got: %v", string(b))
 

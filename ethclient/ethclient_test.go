@@ -19,6 +19,7 @@ package ethclient
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/big"
@@ -274,22 +275,93 @@ func TestEthClient(t *testing.T) {
 }
 
 func testHeader(t *testing.T, chain []*types.Block, client *rpc.Client) {
+	headerDeepEqFn := func(want *types.Header) func(h *types.Header) error {
+		return func(got *types.Header) error {
+			if got != nil && got.Number != nil && got.Number.Sign() == 0 {
+				got.Number = big.NewInt(0) // hack to make DeepEqual work
+			}
+			if !reflect.DeepEqual(got, want) {
+				return fmt.Errorf("got: %v\nwant: %v", got, want)
+			}
+			return nil
+		}
+	}
 	tests := map[string]struct {
 		block   *big.Int
-		want    *types.Header
+		testFn  func(*types.Header) error
 		wantErr error
 	}{
 		"genesis": {
-			block: big.NewInt(0),
-			want:  chain[0].Header(),
+			block:  big.NewInt(0),
+			testFn: headerDeepEqFn(chain[0].Header()),
 		},
 		"first_block": {
-			block: big.NewInt(1),
-			want:  chain[1].Header(),
+			block:  big.NewInt(1),
+			testFn: headerDeepEqFn(chain[1].Header()),
+		},
+		"latest": {
+			block:  nil,
+			testFn: headerDeepEqFn(chain[1].Header()),
+		},
+		"pending": {
+			block: big.NewInt(-1),
+			testFn: func(got *types.Header) error {
+				var errors []error
+
+				// Test difficulty is not nil.
+				// This is an example validation on a field that (almost certainly?) should exist.
+				// In fact, this test fails.
+				// Here's what gets logged:
+				/*
+					pending got: {
+					            "parentHash": "0x228d7580ae75567749daa5ed31ff1fcc09803ebe001b44f64b0f364c19bff4cb",
+					            "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+					            "miner": "0x0000000000000000000000000000000000000000",
+					            "stateRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+					            "transactionsRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+					            "receiptsRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+					            "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+					            "difficulty": null,
+					            "number": null,
+					            "gasLimit": "0x0",
+					            "gasUsed": "0x0",
+					            "timestamp": "0x0",
+					            "extraData": "0x",
+					            "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+					            "nonce": "0x0000000000000000",
+					            "hash": "0xc5343d7f4960fbc487e877585726949b6a36150e3ed7cd0954741f467b98d0b8"
+					        }
+				*/
+				// Some questions and/or analysis:
+				// (See https://eth.wiki/json-rpc/API for documentation).
+				// - sha3Uncles: Why is this filled? (And other fields not?)
+				// - Other fields are null or zero values... according to the documentation they (at least some of them) should be filled.
+				//
+				// This may be related to types.Header JSON Unmarshaling, which
+				// is not designed to accommodate invalid headers (and which the pending block, per documentation, is).
+				if got.Difficulty == nil {
+					errors = append(errors, fmt.Errorf("difficulty: want: %v, got: %v", "non-nil", got.Difficulty))
+				}
+
+				if len(errors) != 0 {
+					// Debug log, eg. comment above.
+					b, _ := json.MarshalIndent(got, "", "    ")
+					t.Logf("pending got: %v", string(b))
+
+					return fmt.Errorf("%v", errors)
+				}
+
+				return nil
+			},
 		},
 		"future_block": {
 			block: big.NewInt(1000000000),
-			want:  nil,
+			testFn: func(header *types.Header) error {
+				if header != nil {
+					return fmt.Errorf("expected nil, got: %v", header)
+				}
+				return nil
+			},
 		},
 	}
 	for name, tt := range tests {
@@ -302,11 +374,8 @@ func testHeader(t *testing.T, chain []*types.Block, client *rpc.Client) {
 			if tt.wantErr != nil && (err == nil || err.Error() != tt.wantErr.Error()) {
 				t.Fatalf("HeaderByNumber(%v) error = %q, want %q", tt.block, err, tt.wantErr)
 			}
-			if got != nil && got.Number.Sign() == 0 {
-				got.Number = big.NewInt(0) // hack to make DeepEqual work
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Fatalf("HeaderByNumber(%v)\n   = %v\nwant %v", tt.block, got, tt.want)
+			if err := tt.testFn(got); err != nil {
+				t.Fatalf("HeaderByNumber(%v): %v", tt.block, err)
 			}
 		})
 	}

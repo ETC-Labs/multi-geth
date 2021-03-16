@@ -287,6 +287,10 @@ func testHeader(t *testing.T, chain []*types.Block, client *rpc.Client) {
 			block: big.NewInt(1),
 			want:  chain[1].Header(),
 		},
+		"latest": {
+			block: nil,
+			want:  chain[1].Header(),
+		},
 		"future_block": {
 			block: big.NewInt(1000000000),
 			want:  nil,

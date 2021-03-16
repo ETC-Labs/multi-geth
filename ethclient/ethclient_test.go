@@ -274,26 +274,49 @@ func TestEthClient(t *testing.T) {
 }
 
 func testHeader(t *testing.T, chain []*types.Block, client *rpc.Client) {
+	headerDeepEqFn := func(want *types.Header) func(h *types.Header) error {
+		return func(got *types.Header) error {
+			if got != nil && got.Number != nil && got.Number.Sign() == 0 {
+				got.Number = big.NewInt(0) // hack to make DeepEqual work
+			}
+			if !reflect.DeepEqual(got, want) {
+				return fmt.Errorf("got: %v\nwant: %v", got, want)
+			}
+			return nil
+		}
+	}
 	tests := map[string]struct {
 		block   *big.Int
-		want    *types.Header
+		testFn  func(*types.Header) error
 		wantErr error
 	}{
 		"genesis": {
-			block: big.NewInt(0),
-			want:  chain[0].Header(),
+			block:  big.NewInt(0),
+			testFn: headerDeepEqFn(chain[0].Header()),
 		},
 		"first_block": {
-			block: big.NewInt(1),
-			want:  chain[1].Header(),
+			block:  big.NewInt(1),
+			testFn: headerDeepEqFn(chain[1].Header()),
 		},
 		"latest": {
-			block: nil,
-			want:  chain[1].Header(),
+			block:  nil,
+			testFn: headerDeepEqFn(chain[1].Header()),
+		},
+		"pending": {
+			block: big.NewInt(-1),
+			testFn: func(got *types.Header) error {
+				// TODO
+				return nil
+			},
 		},
 		"future_block": {
 			block: big.NewInt(1000000000),
-			want:  nil,
+			testFn: func(header *types.Header) error {
+				if header != nil {
+					return fmt.Errorf("expected nil, got: %v", header)
+				}
+				return nil
+			},
 		},
 	}
 	for name, tt := range tests {
@@ -306,11 +329,8 @@ func testHeader(t *testing.T, chain []*types.Block, client *rpc.Client) {
 			if tt.wantErr != nil && (err == nil || err.Error() != tt.wantErr.Error()) {
 				t.Fatalf("HeaderByNumber(%v) error = %q, want %q", tt.block, err, tt.wantErr)
 			}
-			if got != nil && got.Number.Sign() == 0 {
-				got.Number = big.NewInt(0) // hack to make DeepEqual work
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Fatalf("HeaderByNumber(%v)\n   = %v\nwant %v", tt.block, got, tt.want)
+			if err := tt.testFn(got); err != nil {
+				t.Fatalf("HeaderByNumber(%v): %v", tt.block, err)
 			}
 		})
 	}

@@ -19,6 +19,7 @@ package ethclient
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/big"
@@ -305,7 +306,19 @@ func testHeader(t *testing.T, chain []*types.Block, client *rpc.Client) {
 		"pending": {
 			block: big.NewInt(-1),
 			testFn: func(got *types.Header) error {
-				// TODO
+				var errors []error
+				if got.Difficulty == nil {
+					errors = append(errors, fmt.Errorf("difficulty: want: %v, got: %v", "non-nil", got.Difficulty))
+				}
+
+				if len(errors) != 0 {
+					// Debug log
+					b, _ := json.MarshalIndent(got, "", "    ")
+					t.Logf("pending got: %v", string(b))
+
+					return fmt.Errorf("%v", errors)
+				}
+
 				return nil
 			},
 		},

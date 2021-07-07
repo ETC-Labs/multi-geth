@@ -23,7 +23,21 @@ matrix:
         - sudo chmod 666 /dev/fuse
         - sudo chown root:$USER /etc/fuse.conf
         - go run build/ci.go install
-        - go run build/ci.go test -coverage $TEST_PACKAGES
+        - travis_wait 60 go run build/ci.go test
+      before_deploy:
+        - sh build/deploy.sh
+      deploy:
+        provider: releases
+        api_key:
+          secure: KARrS20Qud7MMa4NCxmKIbDeMeeA83Wb+a+O22vIGXOk8IJeG6EcUF+gRsnbT+ARqrKdRZIS84OUB/aebgNLT+j2bk8L+UoBQuz6J6JHDqz1duoVa5CK5bIopVEBfu44ZBXHdE01XWLgGS1ce027iCCk0VRAAjpKDVG2X83YONxClg+cCOc6EpVXviHsxnoMSyOpgxTXQRgdgmv1XyzbBTyYKKFWbtNg7AUbxQ0ngQf800+0OmHLZ7ooILlRH115DQ0KJQeKyegCdjJ0Uc4uoSlqVF1VXKvwCColWT3MHU/U9Ig6Edqloh8ulM3BVhnORrwYwJ+oScfzPUPkg9kwzDdA4QgAhdKHKjOa9V62vPlz/oq4fD4LRs81BHiHQVo/WFK+UTkvrqYpDi+hiFfuob8N4sUGckXP8eEVyY2XP5fCMzkhwe2Xnz2CvWqoLt6v6LeZzYFQs68ZwGuwfKn22PqkuyvO+H3X4qqe7F60ofIl9OjJCeLuIpGovG13t/ivNlRiVk8OYaYQQK6OGDVhVqeWI81GXNrttPQygLStr6nnaQo6Gawtsrwk5/OL2ztKrzypXMy+8o2AaQyxrtaGJxnDv8MMkiv0AN2r3uAAfpS2N8xaImeD0R6/EB9W/P/S54KzxyCvsgcVQ0OHJq1LmICHipzFL7lSj7wBmlXmaiA=
+        file: multi-geth*-$TRAVIS_OS_NAME.*
+        file_glob: true
+        draft: true
+        on:
+          repo: ethoxy/multi-geth
+          tags: true
+        skip_cleanup: true
+        tag_name: "$TRAVIS_TAG"
 
     # These are the latest Go versions.
     - os: linux
@@ -50,7 +64,20 @@ matrix:
         - ulimit -n
         - unset -f cd # workaround for https://github.com/travis-ci/travis-ci/issues/8703
         - go run build/ci.go install
-        - go run build/ci.go test -coverage $TEST_PACKAGES
+      before_deploy:
+        - sh build/deploy.sh
+      deploy:
+        provider: releases
+        api_key:
+          secure: KARrS20Qud7MMa4NCxmKIbDeMeeA83Wb+a+O22vIGXOk8IJeG6EcUF+gRsnbT+ARqrKdRZIS84OUB/aebgNLT+j2bk8L+UoBQuz6J6JHDqz1duoVa5CK5bIopVEBfu44ZBXHdE01XWLgGS1ce027iCCk0VRAAjpKDVG2X83YONxClg+cCOc6EpVXviHsxnoMSyOpgxTXQRgdgmv1XyzbBTyYKKFWbtNg7AUbxQ0ngQf800+0OmHLZ7ooILlRH115DQ0KJQeKyegCdjJ0Uc4uoSlqVF1VXKvwCColWT3MHU/U9Ig6Edqloh8ulM3BVhnORrwYwJ+oScfzPUPkg9kwzDdA4QgAhdKHKjOa9V62vPlz/oq4fD4LRs81BHiHQVo/WFK+UTkvrqYpDi+hiFfuob8N4sUGckXP8eEVyY2XP5fCMzkhwe2Xnz2CvWqoLt6v6LeZzYFQs68ZwGuwfKn22PqkuyvO+H3X4qqe7F60ofIl9OjJCeLuIpGovG13t/ivNlRiVk8OYaYQQK6OGDVhVqeWI81GXNrttPQygLStr6nnaQo6Gawtsrwk5/OL2ztKrzypXMy+8o2AaQyxrtaGJxnDv8MMkiv0AN2r3uAAfpS2N8xaImeD0R6/EB9W/P/S54KzxyCvsgcVQ0OHJq1LmICHipzFL7lSj7wBmlXmaiA=
+        file: multi-geth*-$TRAVIS_OS_NAME.*
+        file_glob: true
+        draft: true
+        on:
+          repo: ethoxy/multi-geth
+          tags: true
+        skip_cleanup: true
+        tag_name: "$TRAVIS_TAG"
 
     # This builder only tests code linters on latest version of Go
     - os: linux

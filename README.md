@@ -5,12 +5,11 @@ Official Golang implementation of the Ethereum protocol.
 [![API Reference](
 https://camo.githubusercontent.com/915b7be44ada53c290eb157634330494ebe3e30a/68747470733a2f2f676f646f632e6f72672f6769746875622e636f6d2f676f6c616e672f6764646f3f7374617475732e737667
 )](https://godoc.org/github.com/ethereum/go-ethereum)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ethereum/go-ethereum)](https://goreportcard.com/report/github.com/ethereum/go-ethereum)
-[![Travis](https://travis-ci.org/ethereum/go-ethereum.svg?branch=master)](https://travis-ci.org/ethereum/go-ethereum)
-[![Discord](https://img.shields.io/badge/discord-join%20chat-blue.svg)](https://discord.gg/nthXNEv)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ethoxy/multi-geth)](https://goreportcard.com/report/github.com/ethoxy/multi-geth)
+[![Travis](https://travis-ci.org/ethoxy/multi-geth.svg?branch=master)](https://travis-ci.org/ethoxy/multi-geth)
+[![Join the chat at https://gitter.im/ethoxy/multi-geth](https://badges.gitter.im/ethoxy/multi-geth.svg)](https://gitter.im/ethoxy/multi-geth)
 
-Automated builds are available for stable releases and the unstable master branch.
-Binary archives are published at https://geth.ethereum.org/downloads/.
+Binary archives are published at https://github.com/ethoxy/multi-geth/releases.
 
 ## Building the source
 
@@ -27,6 +26,15 @@ Once the dependencies are installed, run
 or, to build the full suite of utilities:
 
     make all
+
+## Ellaism network
+
+This is originally an [Ellaism
+Project](https://github.com/ellaism). However, A [recent hard
+fork](https://github.com/ellaism/specs/blob/master/specs/2018-0003-wasm-hardfork.md)
+makes Ellaism not feasible to support go-ethereum any more. Existing
+Ellaism users are asked to switch to
+[Parity](https://github.com/paritytech/parity).
 
 ## Executables
 
@@ -74,13 +82,10 @@ This command will:
 
 ### A Full node on the Ethereum test network
 
-Transitioning towards developers, if you'd like to play around with creating Ethereum contracts, you
-almost certainly would like to do that without any real money involved until you get the hang of the
-entire system. In other words, instead of attaching to the main network, you want to join the **test**
-network with your node, which is fully equivalent to the main network, but with play-Ether only.
+To get on Ellaism network and take advantage of fast-sync:
 
 ```
-$ geth --testnet console
+$ geth --ellaism console
 ```
 
 The `console` subcommand has the exact same meaning as above and they are equally useful on the
@@ -88,25 +93,22 @@ testnet too. Please see above for their explanations if you've skipped here.
 
 Specifying the `--testnet` flag, however, will reconfigure your Geth instance a bit:
 
- * Instead of using the default data directory (`~/.ethereum` on Linux for example), Geth will nest
-   itself one level deeper into a `testnet` subfolder (`~/.ethereum/testnet` on Linux). Note, on OSX
-   and Linux this also means that attaching to a running testnet node requires the use of a custom
-   endpoint since `geth attach` will try to attach to a production node endpoint by default. E.g.
-   `geth attach <datadir>/testnet/geth.ipc`. Windows users are not affected by this.
- * Instead of connecting the main Ethereum network, the client will connect to the test network,
-   which uses different P2P bootnodes, different network IDs and genesis states.
-   
-*Note: Although there are some internal protective measures to prevent transactions from crossing
-over between the main network and test network, you should make sure to always use separate accounts
-for play-money and real-money. Unless you manually move accounts, Geth will by default correctly
-separate the two networks and will not make any accounts available between them.*
+ * Start geth in fast sync mode and start up geth's built-in interactive JavaScript console,
+   connecting to Ethereum Classic network.
+ * Default data directory will be `~/.ethereum/classic`.
 
-### Full node on the Rinkeby test network
+### All networks
 
 The above test network is a cross-client one based on the ethash proof-of-work consensus algorithm. As such, it has certain extra overhead and is more susceptible to reorganization attacks due to the network's low difficulty/security. Go Ethereum also supports connecting to a proof-of-authority based test network called [*Rinkeby*](https://www.rinkeby.io) (operated by members of the community). This network is lighter, more secure, but is only supported by go-ethereum.
 
 ```
-$ geth --rinkeby console
+--testnet                            Ropsten network: pre-configured proof-of-work test network
+--ellaism                            Ellaism network: pre-configured Ellaism mainnet
+--classic                            Ethereum Classic network: pre-configured Ethereum Classic mainnet
+--social                             Ethereum Social network: pre-configured Ethereum Social mainnet
+--mix                                MIX network: pre-configured MIX mainnet
+--ethersocial                        Ethersocial network: pre-configured Ethersocial mainnet
+--rinkeby                            Rinkeby network: pre-configured proof-of-authority test network
 ```
 
 ### Configuration
